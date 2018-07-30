@@ -191,9 +191,7 @@ fs.readFile("random.txt", "utf8", function(error, data){
   var songinText = data.split(",");
 
   console.log(songinText);
-  console.log(songinText[1]);
-  console.log(songinText[0]);
-  spotifyThis(songinText[1]);
+
 })
 
 }
