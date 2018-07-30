@@ -30,6 +30,11 @@ var songTitle = ""
 if (command === "movie-this") {
   omdbNow();
 }
+else if (liriCommand === "my-tweets") {
+	getTweets();
+}
+
+
 
 function omdbNow() {
   //query becomes movie title
@@ -52,19 +57,36 @@ function omdbNow() {
     if (!error && response.statusCode === 200) {
       var movieData = JSON.parse(body);
       // console.log(movieData);
-      console.log("Title:" + movieData.Title + "\n");
-      console.log("Release Year:" + movieData.Year + "\n");
-      console.log("IMDB Rating:" + movieData.imdbRating + "\n");
-      console.log("Rotten Tomatoes Rating:" + movieData.Ratings[1].Value + "\n");
-      console.log("Produced in:" + movieData.Country + "\n");
-      console.log("Language:" + movieData.Language + "\n");
-      console.log("Plot:" + movieData.Plot + "\n");
-      console.log("Actors:" + movieData.Actors + "\n");
+      var result =
+      //Logs information requested in the console
+      "Title:" + movieData.Title + "\n" +
+      "Release Year:" + movieData.Year + "\n" +
+      "IMDB Rating:" + movieData.imdbRating + "\n" +
+      "Rotten Tomatoes Rating:" + movieData.Ratings[1].Value + "\n" +
+      "Produced in:" + movieData.Country + "\n" +
+      "Language:" + movieData.Language + "\n" +
+      "Plot:" + movieData.Plot + "\n" +
+      "Actors:" + movieData.Actors + "\n";
 
+      //display this!
+      console.log(result);
+      //Log this!!
+      logTxt(result);
 
     }
 
   })
+
+  
+}
+
+
+//This will show your last 20 tweets and when they were created at in your terminal/bash window.
+getTweets(){
+
+
+
+
 }
 
 
@@ -93,6 +115,48 @@ function omdbNow() {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//In addition to logging the data to your terminal/bash window, output the data to a .txt file called log.txt.
+
+function logTxt(result){
+  //Make sure we append each command you run to the log.txt file.
+  //Does not overwrite your file each time you run a command.
+	fs.appendFile("dataLog.txt", result + "\n" , function(err) {
+
+    
+    if (err) {
+      console.log("OH GAWD" + err);
+    }
+    else {
+      console.log("Good Lookin'! I've added this to your log ( ͡° ͜ʖ ͡°)");
+    }
+  });
+
+}
 
 
 
