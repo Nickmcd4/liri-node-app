@@ -29,9 +29,16 @@ var songTitle = ""
 //if the third argument is "movie-this", run the imdb function
 if (command === "movie-this") {
   omdbNow();
+} else if (command === "my-tweets") {
+  getTweets();
 }
-else if (command === "my-tweets") {
-	getTweets();
+//If the third argument is "spotify-this-song, run spotify function"
+else if (command === "spotify-this-song") {
+  spotifyThis(songTitle);
+}
+//if third argument is do-what-i-say
+else if (command === "do-what-it-says") {
+  doWhatItSays();
 }
 
 
@@ -58,15 +65,15 @@ function omdbNow() {
       var movieData = JSON.parse(body);
       // console.log(movieData);
       var OMDBresult =
-      //Logs information requested in the console
-      "Title:" + movieData.Title + "\n" +
-      "Release Year:" + movieData.Year + "\n" +
-      "IMDB Rating:" + movieData.imdbRating + "\n" +
-      "Rotten Tomatoes Rating:" + movieData.Ratings[1].Value + "\n" +
-      "Produced in:" + movieData.Country + "\n" +
-      "Language:" + movieData.Language + "\n" +
-      "Plot:" + movieData.Plot + "\n" +
-      "Actors:" + movieData.Actors + "\n";
+        //Logs information requested in the console
+        "Title:" + movieData.Title + "\n" +
+        "Release Year:" + movieData.Year + "\n" +
+        "IMDB Rating:" + movieData.imdbRating + "\n" +
+        "Rotten Tomatoes Rating:" + movieData.Ratings[1].Value + "\n" +
+        "Produced in:" + movieData.Country + "\n" +
+        "Language:" + movieData.Language + "\n" +
+        "Plot:" + movieData.Plot + "\n" +
+        "Actors:" + movieData.Actors + "\n";
 
       //display this!
       console.log(OMDBresult);
@@ -77,49 +84,119 @@ function omdbNow() {
 
   })
 
-  
+
 }
 
 
 //This will show your last 20 tweets and when they were created at in your terminal/bash window.
-function getTweets(){
+function getTweets() {
 
-  var parameters = {screen_name: 'bearcreekwilson', limit: 20};
+  var parameters = {
+    screen_name: 'bearcreekwilson',
+    limit: 20
+  };
 
-  client.get('statuses/user_timeline', parameters, function(error, tweets, response){
-    if (!error){
+  client.get('statuses/user_timeline', parameters, function (error, tweets, response) {
+    if (!error) {
       // console.log(tweets);
       console.log("============BEHOLD MY MOST RECENT TWEETS============");
 
-      for (var i=0; i < tweets.length; i++){ //loops through tweets in object(see below)
+      for (var i = 0; i < tweets.length; i++) { //loops through tweets in object(see below)
         //create a variable that can be logged in my .txt file
         // console.log(tweets);
         var twitterResult =
 
-        "@" + tweets[i].user.screen_name + ":" + " " + tweets[i].text + "\r\n" + "This tweet was brought to you at: " + tweets[i].created_at + "\n";
+          "@" + tweets[i].user.screen_name + ":" + " " + tweets[i].text + "\r\n" + "This tweet was brought to you at: " + tweets[i].created_at + "\n";
 
         // screen_name + ":" + tweets[i].text + "\n";
         // console.log(tweets[i].user.screen_name);
         // console.log(tweets[i].text + "\n");
 
-         console.log(twitterResult);
-         logTxt(twitterResult);
+        console.log(twitterResult);
+        logTxt(twitterResult);
       }
     }
   })
 
+}
+
+function spotifyThis(songTitle) {
+  songTitle = query;
+
+  if (!songTitle){
+    songTitle = "the sign";
+  }
+
+  spotify.search({
+    type: 'track',
+    query: songTitle,
+    limit: 10
+  }, function (err, data) {
 
 
+    if (err) {
+      return console.log('OH LAWD: ' + err);
+    } 
+    if(songTitle === "the sign"){
+      var theSign =
+      "Song Title: " + data.tracks.items[5].name + "\r\n" +
+      "Artist" + data.tracks.items[5].artists[0].name + "\r\n" + 
+      "Preview: " + data.tracks.items[5].preview_url + "\r\n" +
+      "Album: " + data.tracks.items[5].album.name + "\n";
+
+      console.log(theSign);
+      logTxt(theSign);
+
+
+      // console.log(data.tracks.items[5].artists[0]);
+    }
+    else {
+      console.log("SEARCHING FOR.... " + songTitle + "\n");
+      for (var i = 0; i < data.tracks.items.length; i++) {
+        // console.log(data.tracks.items[i].artists[0].name);
+        var track = data.tracks.items[i]
+
+        var spotifyResult = //creating variable to post to log.txt
+          "Song Title: " + track.name + "\r\n" +
+          "Artist: " + track.artists[0].name + "\r\n" +
+          "Preview: " + track.preview_url + "\r\n" +
+          "Album: " + track.album.name + "\n";
+
+        console.log(spotifyResult);
+        logTxt(spotifyResult);
+      }
+    }
+
+
+
+
+
+  })
 }
 
 
 
 
+//Using the fs Node package, LIRI will take the text inside of random.txt and then use it to call one of LIRI's commands.
+function doWhatItSays(){
+fs.readFile("random.txt", "utf8", function(error, data){
 
 
+  if (error) {
+    return console.log(error);
+  }
 
+  // console.log(data);
 
+  var songinText = data.split(",");
 
+  console.log(songinText);
+  console.log(songinText[1]);
+  console.log(songinText[0]);
+  spotifyThis(songinText[1]);
+})
+
+}
 
 
 
@@ -165,16 +242,15 @@ function getTweets(){
 
 //In addition to logging the data to your terminal/bash window, output the data to a .txt file called log.txt.
 
-function logTxt(result){
+function logTxt(result) {
   //Make sure we append each command you run to the log.txt file.
   //Does not overwrite your file each time you run a command.
-	fs.appendFile("dataLog.txt", result + "\n" , function(err) {
+  fs.appendFile("dataLog.txt", result + "\n", function (err) {
 
-    
+
     if (err) {
       console.log("OH GAWD" + err);
-    }
-    else {
+    } else {
       console.log("Good Lookin'! I've added this to your log ( ͡° ͜ʖ ͡°)");
     }
   });
