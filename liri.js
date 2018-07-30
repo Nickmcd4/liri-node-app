@@ -30,7 +30,7 @@ var songTitle = ""
 if (command === "movie-this") {
   omdbNow();
 }
-else if (liriCommand === "my-tweets") {
+else if (command === "my-tweets") {
 	getTweets();
 }
 
@@ -57,7 +57,7 @@ function omdbNow() {
     if (!error && response.statusCode === 200) {
       var movieData = JSON.parse(body);
       // console.log(movieData);
-      var result =
+      var OMDBresult =
       //Logs information requested in the console
       "Title:" + movieData.Title + "\n" +
       "Release Year:" + movieData.Year + "\n" +
@@ -69,9 +69,9 @@ function omdbNow() {
       "Actors:" + movieData.Actors + "\n";
 
       //display this!
-      console.log(result);
+      console.log(OMDBresult);
       //Log this!!
-      logTxt(result);
+      logTxt(OMDBresult);
 
     }
 
@@ -82,8 +82,31 @@ function omdbNow() {
 
 
 //This will show your last 20 tweets and when they were created at in your terminal/bash window.
-getTweets(){
+function getTweets(){
 
+  var parameters = {screen_name: 'bearcreekwilson', limit: 20};
+
+  client.get('statuses/user_timeline', parameters, function(error, tweets, response){
+    if (!error){
+      // console.log(tweets);
+      console.log("============BEHOLD MY MOST RECENT TWEETS============");
+
+      for (var i=0; i < tweets.length; i++){ //loops through tweets in object(see below)
+        //create a variable that can be logged in my .txt file
+        // console.log(tweets);
+        var twitterResult =
+
+        "@" + tweets[i].user.screen_name + ":" + " " + tweets[i].text + "\r\n" + "This tweet was brought to you at: " + tweets[i].created_at + "\n";
+
+        // screen_name + ":" + tweets[i].text + "\n";
+        // console.log(tweets[i].user.screen_name);
+        // console.log(tweets[i].text + "\n");
+
+         console.log(twitterResult);
+         logTxt(twitterResult);
+      }
+    }
+  })
 
 
 
