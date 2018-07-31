@@ -5,6 +5,8 @@ var request = require('request');
 var Twitter = require('twitter');
 var Spotify = require('node-spotify-api');
 var fs = require('fs');
+var cmd     = require('node-command-line'),
+    Promise = require('bluebird');
 
 
 var spotify = new Spotify(keys.spotify);
@@ -190,8 +192,11 @@ fs.readFile("random.txt", "utf8", function(error, data){
 
   var songinText = data.split(",");
 
-  console.log(songinText);
+  console.log(songinText[0]);
 
+  cmd.run('node ' + " " + 'liri.js' + " " + songinText[0] + " " + songinText[1]);
+  
+  
 })
 
 }
